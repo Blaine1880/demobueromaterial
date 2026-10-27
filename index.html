@@ -390,7 +390,7 @@
       format: val("format"), color: val("color"), qty: qty.value,
       ship: $("ship").value, check: val("check"), name: $("orderName").value
     });
-    alert("Demo-Shop: Die Kasse ist in der Online-Version nicht verfügbar.");
+    location.href = "checkout.html?" + p.toString();
   });
 
   update();
