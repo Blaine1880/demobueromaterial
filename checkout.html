@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="spendone-prefill.js"></script>
 <meta name="robots" content="noindex">
 <title>Kasse | demobüromaterial</title>
 <style>
@@ -69,6 +70,7 @@
   .row.big { font-size: 20px; font-weight: 700; color: var(--brand); }
   .btn { display: block; width: 100%; margin-top: 12px; background: var(--brand); color: #fff; font-weight: 700; border: 0; padding: 12px; border-radius: 7px; cursor: pointer; font-size: 15px; }
   .btn:hover { background: var(--brand-dark); }
+  .spendone-note { white-space: pre-line; font-size: 12px; background: #eef7f4; color: var(--brand); border-radius: 6px; padding: 8px 10px; margin-top: 10px; }
   .legal { font-size: 11px; color: var(--muted); margin-top: 8px; }
   .back { display: inline-block; font-size: 12px; margin-top: 10px; }
 
@@ -110,21 +112,21 @@
       <div class="card">
         <h2><span class="num">1</span>Firmendaten &amp; Rechnungsadresse</h2>
         <div class="grid">
-          <div class="c5"><label class="f">Firmenname <b>*</b></label><input required></div>
-          <div class="c3"><label class="f">USt-IdNr.</label><input></div>
+          <div class="c5"><label class="f">Firmenname <b>*</b></label><input id="company" required></div>
+          <div class="c3"><label class="f">USt-IdNr.</label><input id="vatId"></div>
           <div class="c2"><label class="f">Bestellnummer</label><input id="poNumber"></div>
           <div class="c2"><label class="f">Abteilung</label><input></div>
           <div class="c2"><label class="f">Anrede</label><select><option>Frau</option><option>Herr</option><option>Divers</option></select></div>
-          <div class="c3"><label class="f">Vorname <b>*</b></label><input required></div>
-          <div class="c3"><label class="f">Nachname <b>*</b></label><input required></div>
+          <div class="c3"><label class="f">Vorname <b>*</b></label><input id="firstName" required></div>
+          <div class="c3"><label class="f">Nachname <b>*</b></label><input id="lastName" required></div>
           <div class="c4"><label class="f">Telefon</label><input type="tel"></div>
           <div class="c4"><label class="f">E-Mail <b>*</b></label><input type="email" required></div>
-          <div class="c4"><label class="f">Rechnungs-E-Mail (falls abweichend)</label><input type="email"></div>
-          <div class="c4"><label class="f">Straße und Hausnummer <b>*</b></label><input required></div>
+          <div class="c4"><label class="f">Rechnungs-E-Mail (falls abweichend)</label><input id="invoiceEmail" type="email"></div>
+          <div class="c4"><label class="f">Straße und Hausnummer <b>*</b></label><input id="street" required></div>
           <div class="c2"><label class="f">Adresszusatz</label><input></div>
-          <div class="c2"><label class="f">PLZ <b>*</b></label><input required></div>
-          <div class="c3"><label class="f">Ort <b>*</b></label><input required></div>
-          <div class="c2"><label class="f">Land <b>*</b></label><select><option>Deutschland</option><option>Österreich</option><option>Schweiz</option></select></div>
+          <div class="c2"><label class="f">PLZ <b>*</b></label><input id="postcode" required></div>
+          <div class="c3"><label class="f">Ort <b>*</b></label><input id="city" required></div>
+          <div class="c2"><label class="f">Land <b>*</b></label><select id="country"><option>Deutschland</option><option>Österreich</option><option>Schweiz</option></select></div>
           <div class="c3" style="align-self:end"><label class="check" style="margin:0 0 8px"><input type="checkbox" checked><span>Lieferadresse wie Rechnungsadresse</span></label></div>
         </div>
       </div>
@@ -168,6 +170,7 @@
 
       <label class="check"><input type="checkbox" required><span>Ich akzeptiere die <a href="#">AGB</a> und die <a href="#">Datenschutzhinweise</a>.</span></label>
       <button class="btn" type="submit">Zahlungspflichtig bestellen</button>
+      <div class="spendone-note" id="spendoneNote" hidden></div>
       <p class="legal">Demo-Shop: Es werden keine Daten gespeichert oder übertragen.</p>
       <a class="back" href="#" id="back">‹ Zurück zum Produkt</a>
     </aside>
@@ -212,6 +215,52 @@
   $("vat").textContent = eur(vat);
   $("gross").textContent = eur(net + vat);
   $("back").href = "index.html";
+
+  // Prefill from the SpendOne order window (see spendone-prefill.js). All keys are optional.
+  const COUNTRY_NAMES = {
+    Deutschland: ["de", "deu", "deutschland", "germany"],
+    "Österreich": ["at", "aut", "österreich", "austria"],
+    Schweiz: ["ch", "che", "schweiz", "switzerland"],
+  };
+  function applySpendOnePrefill(p) {
+    if (!p) return;
+    const set = (id, v) => { if (v) $(id).value = v; };
+    set("company", p.companyName);
+    set("vatId", p.taxId);
+    set("poNumber", p.orderNo);
+    set("invoiceEmail", p.invoiceEmail);
+    set("street", p.street);
+    if (p.postcodeCity) {
+      const [postcode, ...city] = p.postcodeCity.split(" ");
+      set("postcode", postcode);
+      set("city", city.join(" "));
+    }
+    if (p.buyer) {
+      const parts = p.buyer.trim().split(/\s+/);
+      set("lastName", parts.length > 1 ? parts.pop() : "");
+      set("firstName", parts.join(" "));
+    }
+    if (p.country) {
+      const c = p.country.trim().toLowerCase();
+      const match = Object.keys(COUNTRY_NAMES).find(n => COUNTRY_NAMES[n].includes(c));
+      const sel = $("country");
+      if (match) sel.value = match;
+      else {
+        const o = document.createElement("option");
+        o.textContent = p.country;
+        sel.appendChild(o);
+        sel.value = p.country;
+      }
+    }
+    // Show what came from SpendOne; total is a display string, never parsed
+    const note = $("spendoneNote");
+    const lines = [`Bestelldaten aus SpendOne übernommen${p.orderNo ? ` (${p.orderNo})` : ""}.`];
+    if (p.items && p.items.length) lines.push("Artikel: " + p.items.map(i => i.name).join(", "));
+    if (p.total) lines.push("Gesamt laut SpendOne: " + p.total);
+    note.textContent = lines.join("\n");
+    note.hidden = false;
+  }
+  applySpendOnePrefill(window.spendOnePrefill);
 
   // Payment method switch
   document.querySelectorAll('input[name="pay"]').forEach(r => r.addEventListener("change", () => {
