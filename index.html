@@ -10,6 +10,7 @@
 <meta property="og:type" content="product">
 <meta property="og:title" content="Snacktüten (750er Packung), individuell bedruckt | demobüromaterial">
 <meta property="og:description" content="350 g Food-Karton, kunststofffrei, 4/0-farbig. 750 Stk. für 467,88 € netto, Lieferzeit 5 bis 7 Werktage.">
+<meta property="og:image" content="https://demoshop.spendone.com/product.jpg">
 <meta property="product:price:amount" content="556.78">
 <meta property="product:price:currency" content="EUR">
 <script type="application/ld+json">
@@ -19,6 +20,7 @@
   "name": "Snacktüten (750er Packung) 18,3 x 13,8 cm, 4/0-farbig",
   "sku": "DBM-40718",
   "mpn": "DBM-40718",
+  "image": "https://demoshop.spendone.com/product.jpg",
   "category": "Verpackungen > Food-Verpackungen > Snacktüten",
   "brand": { "@type": "Brand", "name": "demobüromaterial" },
   "description": "Kunststofffreie Spitz- bzw. Snacktüten für Pommes, Nuggets und Fingerfood, individuell bedruckt. 350 g Food-Karton, Barriereschicht aus pflanzlichen Rohstoffen, lebensmittelgeeignet, geruchs- und geschmacksneutral, 100 % recycelbar und kompostierbar, seitlich verklebt, flach geliefert.",
@@ -64,7 +66,8 @@
   .product { display: grid; grid-template-columns: 360px minmax(0, 1fr) 320px; gap: 28px; align-items: start; }
 
   .gallery-main { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-  .gallery-main svg { width: 100%; height: 100%; }
+  .gallery-main svg, .gallery-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 5px; }
   .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
   .thumbs button { aspect-ratio: 1 / 1; border: 1px solid var(--line); border-radius: 8px; background: var(--card); padding: 4px; cursor: pointer; }
   .thumbs button.active { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); }
@@ -248,9 +251,9 @@
   <section class="product">
     <!-- Gallery -->
     <div>
-      <div class="gallery-main"><svg role="img" aria-label="Snacktüte"><use id="mainArt" href="#artCone"/></svg></div>
+      <div class="gallery-main"><img id="mainPhoto" src="product.jpg" alt="Snacktüte aus Kraftkarton im Drahtständer" width="1264" height="1264"><svg id="mainSvg" role="img" aria-label="Produktansicht" hidden><use id="mainArt" href="#artMaterial"/></svg></div>
       <div class="thumbs">
-        <button type="button" class="active" data-art="artCone" aria-label="Ansicht Snacktüte"><svg><use href="#artCone"/></svg></button>
+        <button type="button" class="active" data-art="photo" aria-label="Ansicht Snacktüte"><img src="product.jpg" alt=""></button>
         <button type="button" data-art="artMaterial" aria-label="Ansicht Material"><svg><use href="#artMaterial"/></svg></button>
         <button type="button" data-art="artFlat" aria-label="Ansicht flach geliefert"><svg><use href="#artFlat"/></svg></button>
       </div>
@@ -434,7 +437,10 @@
 
   // Gallery thumbnails
   document.querySelectorAll(".thumbs button").forEach(b => b.addEventListener("click", () => {
-    $("mainArt").setAttribute("href", "#" + b.dataset.art);
+    const photo = b.dataset.art === "photo";
+    $("mainPhoto").hidden = !photo;
+    $("mainSvg").hidden = photo;
+    if (!photo) $("mainArt").setAttribute("href", "#" + b.dataset.art);
     document.querySelectorAll(".thumbs button").forEach(x => x.classList.toggle("active", x === b));
   }));
 
