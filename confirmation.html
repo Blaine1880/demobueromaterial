@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Bestellbestätigung | demobüromaterial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shop.css">
+<style>
+  .co-head { background: var(--card); border-bottom: 1px solid var(--line); }
+  .co-head .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .secure { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); }
+
+  .hero { text-align: center; padding: 36px 0 26px; }
+  .hero .ok { width: 64px; height: 64px; border-radius: 50%; background: var(--ok-bg); color: var(--ok); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+  .hero h1 { font-size: 26px; margin: 0 0 8px; letter-spacing: -0.02em; }
+  .hero p { color: var(--ink-2); margin: 0 auto; max-width: 560px; }
+  .order-no { display: inline-flex; gap: 8px; align-items: center; margin-top: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 13px; color: var(--muted); }
+  .order-no b { color: var(--ink); font-weight: 600; }
+
+  .main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; max-width: 1000px; margin: 0 auto; }
+  .card + .card { margin-top: 16px; }
+  h2 { font-size: 15.5px; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .item { display: flex; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+  .item img { width: 72px; height: 72px; border-radius: 8px; border: 1px solid var(--line); object-fit: cover; flex-shrink: 0; }
+  .item strong { font-size: 14px; font-weight: 600; }
+  .item small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 3px; }
+  .row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 13.5px; color: var(--ink-2); }
+  .row.big { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 10px; font-size: 18px; font-weight: 700; color: var(--ink); }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .block h3 { font-size: 12.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin: 0 0 6px; }
+  .block p { margin: 0; color: var(--ink); line-height: 1.6; }
+  dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; font-size: 13.5px; }
+  dt { color: var(--muted); }
+  dd { margin: 0; text-align: right; font-weight: 500; }
+  .actions-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-secondary { background: var(--card); color: var(--ink); border: 1px solid var(--line-strong); margin-top: 0; }
+  .btn-secondary:hover { background: var(--bg); }
+  .actions-row .btn-primary { margin-top: 0; }
+  .legal { font-size: 11.5px; color: var(--muted); text-align: center; margin: 22px 0 0; }
+  .co-foot { text-align: center; font-size: 12px; color: var(--muted); padding: 28px 0 32px; }
+  .co-foot a { color: var(--muted); margin: 0 8px; }
+
+  @media (max-width: 860px) {
+    .main, .cols { grid-template-columns: 1fr; }
+  }
+  @media print {
+    .co-head, .actions-row, .co-foot, .legal { display: none; }
+    body { background: #fff; }
+  }
+  /* Scale up on large screens so the page fills more of the window */
+  @media (min-width: 1500px) { body { zoom: 1.02; } }
+  @media (min-width: 1800px) { body { zoom: 1.12; } }
+  @media (min-width: 2300px) { body { zoom: 1.32; } }
+</style>
+</head>
+<body>
+
+<header class="co-head">
+  <div class="wrap">
+    <a class="logo" href="index.html"><span class="mark">d</span><span>demobüro<b>material</b></span></a>
+    <span class="secure"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Sichere Bestellung</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="ok"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>
+    <h1>Vielen Dank für Ihre Bestellung!</h1>
+    <p id="intro">Ihre Bestellung ist bei uns eingegangen. Eine Bestätigung erhalten Sie per E-Mail.</p>
+    <div class="order-no" id="orderNoPill" hidden>Bestellnummer <b id="orderNo"></b></div>
+  </section>
+
+  <div class="main" id="details" hidden>
+    <div>
+      <div class="card">
+        <h2>Ihre Bestellung</h2>
+        <div class="item">
+          <img src="product.jpg" alt="">
+          <div><strong id="product"></strong><small id="spec"></small></div>
+        </div>
+        <div class="row"><span>Versand</span><span>0,00 €</span></div>
+        <div class="row"><span>Netto</span><span id="net"></span></div>
+        <div class="row"><span>MwSt. (19 %)</span><span id="vat"></span></div>
+        <div class="row big"><span>Gesamt</span><span id="gross"></span></div>
+      </div>
+
+      <div class="card">
+        <div class="cols">
+          <div class="block">
+            <h3>Rechnungs- und Lieferadresse</h3>
+            <p id="address"></p>
+          </div>
+          <div class="block">
+            <h3>Kontakt</h3>
+            <p id="contact"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <h2>Bestelldetails</h2>
+        <dl id="facts"></dl>
+      </div>
+      <div class="actions-row">
+        <button class="btn btn-secondary" type="button" onclick="window.print()">Drucken</button>
+        <a class="btn btn-primary" href="index.html">Weiter einkaufen</a>
+      </div>
+    </aside>
+  </div>
+
+  <div id="noDetails" style="text-align:center">
+    <a class="btn btn-primary" href="index.html" style="display:inline-flex;width:auto;padding:12px 28px">Weiter einkaufen</a>
+  </div>
+
+  <p class="legal">Demo-Shop: Es werden keine Daten gespeichert oder übertragen.</p>
+</main>
+
+<footer class="co-foot">
+  © demobüromaterial GmbH <a href="#">AGB</a><a href="#">Datenschutz</a><a href="#">Impressum</a>
+</footer>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  // Read the order handed over by the checkout (same tab only), then forget it
+  let order = null;
+  try {
+    order = JSON.parse(sessionStorage.getItem("dbmOrder") || "null");
+    sessionStorage.removeItem("dbmOrder");
+  } catch {}
+
+  // Adds working days (Mon to Fri) to today
+  function addWorkdays(n) {
+    const d = new Date();
+    while (n > 0) { d.setDate(d.getDate() + 1); if (d.getDay() % 6 !== 0) n--; }
+    return d;
+  }
+  const fmtDay = d => d.toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" });
+
+  // Builds text lines without innerHTML, so typed values stay plain text
+  function setLines(el, lines) {
+    lines.filter(Boolean).forEach((l, i) => {
+      if (i) el.appendChild(document.createElement("br"));
+      el.appendChild(document.createTextNode(l));
+    });
+  }
+
+  if (order) {
+    $("orderNo").textContent = order.orderNo;
+    $("orderNoPill").hidden = false;
+    $("intro").textContent = order.email
+      ? `Ihre Bestellung ist bei uns eingegangen. Eine Bestätigung senden wir an ${order.email}.`
+      : "Ihre Bestellung ist bei uns eingegangen. Eine Bestätigung erhalten Sie per E-Mail.";
+
+    $("product").textContent = order.product;
+    $("spec").textContent = order.spec;
+    $("net").textContent = order.net;
+    $("vat").textContent = order.vat;
+    $("gross").textContent = order.gross;
+
+    setLines($("address"), [order.company, order.name, order.street, order.postcodeCity, order.country]);
+    setLines($("contact"), [order.email, order.vatId ? `USt-IdNr. ${order.vatId}` : ""]);
+
+    const [from, to] = order.express ? [2, 3] : [5, 7];
+    const facts = [
+      ["Bestellnummer", order.orderNo],
+      ["Ihre Bestellnummer", order.poNumber],
+      ["Bestelldatum", fmtDay(new Date())],
+      ["Zahlungsart", order.payment],
+      ["Lieferung", order.express ? "Express" : "Standard"],
+      ["Voraussichtlich", `${fmtDay(addWorkdays(from))} bis ${fmtDay(addWorkdays(to))}`],
+    ];
+    facts.filter(([, v]) => v).forEach(([k, v]) => {
+      const dt = document.createElement("dt"); dt.textContent = k;
+      const dd = document.createElement("dd"); dd.textContent = v;
+      $("facts").append(dt, dd);
+    });
+
+    $("details").hidden = false;
+    $("noDetails").hidden = true;
+  }
+</script>
+</body>
+</html>
